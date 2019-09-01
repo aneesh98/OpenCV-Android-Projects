@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -13,26 +14,43 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 
+import org.opencv.core.Core;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
 
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
     Bitmap originalBitmap;
+    public Bitmap currentBitmap;
+    public ImageView imgView;
+    public Mat originalMat;
+    Button DoG;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Intent intent = new Intent(Intent.ACTION_PICK,
                 Uri.parse("content://media/internal/images/media"));
-
+        DoG = (Button) findViewById(R.id.gBlur);
+        DoG.setVisibility(View.INVISIBLE);
+        DoG.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DifferenceOfGaussian();
+            }
+        });
     }
     private BaseLoaderCallback mOpenCVCallBack = new BaseLoaderCallback(this) {
 
@@ -103,15 +121,38 @@ public class MainActivity extends AppCompatActivity {
             rotate90.postRotate(orientation);
             originalBitmap = rotateBitmap(temp, orientation);
             Bitmap tempBitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true);
-            Mat originalMat = new Mat(tempBitmap.getHeight(), tempBitmap.getWidth(), CvType.CV_8U);
+            originalMat = new Mat(tempBitmap.getHeight(), tempBitmap.getWidth(), CvType.CV_8U);
             Utils.bitmapToMat(tempBitmap, originalMat);
 
-            Bitmap currentBitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, false);
-            ImageView imgView = (ImageView) findViewById(R.id.image_view);
+            currentBitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, false);
+            imgView = (ImageView) findViewById(R.id.image_view);
             imgView.setImageBitmap(currentBitmap);
+            DoG.setVisibility(View.VISIBLE);
 
         }
     }
+
+    public void DifferenceOfGaussian()
+    {
+        Mat grayMat = new Mat();
+        Mat blur1 = new Mat();
+        Mat blur2 = new Mat();
+
+        Imgproc.cvtColor(originalMat, grayMat, Imgproc.COLOR_BGR2GRAY);
+        Imgproc.GaussianBlur(grayMat, blur1, new Size(15,15), 5);
+        Imgproc.GaussianBlur(grayMat, blur2, new Size(21, 21), 5);
+
+        Mat DoG = new Mat();
+        Core.absdiff(blur1, blur2, DoG);
+
+        Core.multiply(DoG, new Scalar(100), DoG);
+        Imgproc.threshold(DoG, DoG, 50, 255, Imgproc.THRESH_BINARY_INV);
+
+        Utils.matToBitmap(DoG, currentBitmap);
+        imgView.setImageBitmap(currentBitmap);
+
+    }
+
     public Bitmap rotateBitmap(Bitmap bitmap, int orientation) {
         Matrix matrix = new Matrix();
         switch (orientation) {
