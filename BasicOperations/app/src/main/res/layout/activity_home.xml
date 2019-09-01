@@ -25,4 +25,29 @@
         android:id="@+id/bMedian"
         android:text = "Median Blur"
         />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/bDilation"
+        android:text = "Dilation"
+        />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/bErosion"
+        android:text = "Erosion"
+        />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/bThresholding"
+        android:text = "Thresholding"
+        />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/bAdaptiveThresholding"
+        android:text = "Adaptive Thresholding"
+        />
+
 </LinearLayout>

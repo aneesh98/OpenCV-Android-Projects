@@ -97,6 +97,19 @@ public class MainActivity extends AppCompatActivity {
                             case HomeActivity.MEDIAN_BLUR:
                                 Imgproc.medianBlur(src, src, 7);
                                 break;
+                            case HomeActivity.DILATION:
+                                Mat kernelDilate = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(7,7));
+                                Imgproc.dilate(src, src, kernelDilate);
+                                break;
+                            case HomeActivity.EROSION:
+                                Mat kernelErode = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(5,5));
+                                Imgproc.erode(src, src, kernelErode);
+                                break;
+                            case HomeActivity.THRESHOLDING:
+                                Imgproc.threshold(src, src, 100, 255,
+                                        Imgproc.THRESH_TRUNC);
+                                break;
+
                         }
                         Bitmap processedImage = Bitmap.createBitmap(src.cols(),
                                 src.rows(), Bitmap.Config.ARGB_8888);
@@ -114,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume(){
         super.onResume();
-        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_10, this,
+        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_4_0, this,
                 mOpenCVCallBack);
     }
 }
