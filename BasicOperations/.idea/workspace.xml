@@ -10,10 +10,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b909b87c-0320-4965-a5e7-439e0d9c0e7b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/basicoperations/HomeActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/basicoperations/HomeActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/basicoperations/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/basicoperations/MainActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_home.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_home.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -51,8 +48,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/basicoperations/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="130" column="33" lean-forward="true" selection-start-line="130" selection-start-column="33" selection-end-line="130" selection-end-column="33" />
+            <state relative-caret-position="180">
+              <caret line="119" column="69" lean-forward="true" selection-start-line="119" selection-start-column="69" selection-end-line="119" selection-end-column="69" />
             </state>
           </provider>
         </entry>
@@ -194,7 +191,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="51" y="25" width="658" height="743" extended-state="4" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" weight="0.32843137" />
       <window_info id="Structure" side_tool="true" />
@@ -270,8 +266,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/basicoperations/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="130" column="33" lean-forward="true" selection-start-line="130" selection-start-column="33" selection-end-line="130" selection-end-column="33" />
+        <state relative-caret-position="180">
+          <caret line="119" column="69" lean-forward="true" selection-start-line="119" selection-start-column="69" selection-end-line="119" selection-end-column="69" />
         </state>
       </provider>
     </entry>

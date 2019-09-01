@@ -109,6 +109,11 @@ public class MainActivity extends AppCompatActivity {
                                 Imgproc.threshold(src, src, 100, 255,
                                         Imgproc.THRESH_TRUNC);
                                 break;
+                            case HomeActivity.ADAPTIVE:
+                                Imgproc.cvtColor(src, src, Imgproc.COLOR_BGR2GRAY);
+                                Imgproc.adaptiveThreshold(src, src, 255, Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                        Imgproc.THRESH_BINARY, 3, 0);
+                                break;
 
                         }
                         Bitmap processedImage = Bitmap.createBitmap(src.cols(),
