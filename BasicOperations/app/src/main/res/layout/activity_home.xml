@@ -13,4 +13,16 @@
         android:id="@+id/bMean"
         android:text = "Mean Blur"
         />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/bGaussian"
+        android:text = "Gaussian Blur"
+        />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/bMedian"
+        android:text = "Median Blur"
+        />
 </LinearLayout>

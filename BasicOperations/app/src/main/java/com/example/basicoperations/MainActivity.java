@@ -89,7 +89,13 @@ public class MainActivity extends AppCompatActivity {
                         Utils.bitmapToMat(selectImage, src);
                         switch(ACTION_MODE){
                             case HomeActivity.MEAN_BLUR:
-                                Imgproc.blur(src, src, new Size(3,3));
+                                Imgproc.blur(src, src, new Size(47,47));
+                                break;
+                            case HomeActivity.GAUSSIAN_BLUR:
+                                Imgproc.GaussianBlur(src, src, new Size(31,31), 0);
+                                break;
+                            case HomeActivity.MEDIAN_BLUR:
+                                Imgproc.medianBlur(src, src, 7);
                                 break;
                         }
                         Bitmap processedImage = Bitmap.createBitmap(src.cols(),
