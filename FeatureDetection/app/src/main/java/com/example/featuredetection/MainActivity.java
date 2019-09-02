@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     public Bitmap currentBitmap;
     public ImageView imgView;
     public Mat originalMat;
-    Button DoG, canny, sobel, corners;
+    Button DoG, canny, sobel, corners, line, circle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +76,23 @@ public class MainActivity extends AppCompatActivity {
                 HarrisCorner();
             }
         });
+        line = (Button) findViewById(R.id.Line);
+        circle = (Button) findViewById(R.id.circle);
+        line.setVisibility(View.INVISIBLE);
+        circle.setVisibility(View.INVISIBLE);
+        line.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HoughLines();
+            }
+        });
+        circle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HoughCircles();
+            }
+        });
+
     }
     private BaseLoaderCallback mOpenCVCallBack = new BaseLoaderCallback(this) {
 
@@ -156,6 +173,8 @@ public class MainActivity extends AppCompatActivity {
             canny.setVisibility(View.VISIBLE);
             sobel.setVisibility(View.VISIBLE);
             corners.setVisibility(View.VISIBLE);
+            line.setVisibility(View.VISIBLE);
+            circle.setVisibility(View.VISIBLE);
         }
     }
 
@@ -226,6 +245,58 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         Utils.matToBitmap(corners, currentBitmap);
+        imgView.setImageBitmap(currentBitmap);
+    }
+
+    public void HoughLines(){
+        Mat grayMat = new Mat();
+        Mat cannyEdges = new Mat();
+        Mat lines = new Mat();
+        Imgproc.cvtColor(originalMat, grayMat, Imgproc.COLOR_BGR2GRAY);
+        Imgproc.Canny(grayMat, cannyEdges, 10, 100);
+        Imgproc.HoughLinesP(cannyEdges, lines, 1, Math.PI/180, 50, 20, 20);
+        Mat houghLines = new Mat();
+        houghLines.create(cannyEdges.rows(), cannyEdges.cols(), CvType.CV_8UC1);
+        for (int i = 0 ; i < lines.cols() ; i++) {
+            double[] points = lines.get(0 , i);
+            double x1, y1, x2, y2;
+            x1 = points[0];
+            y1 = points[1];
+            x2 = points[2];
+            y2 = points[3];
+            Point pt1 = new Point(x1, y1);
+            Point pt2 = new Point(x2, y2);
+            Imgproc.line(houghLines, pt1, pt2, new Scalar(255, 0, 0), 1);
+        }
+        Utils.matToBitmap(houghLines, currentBitmap);
+        imgView.setImageBitmap(currentBitmap);
+    }
+
+    public void HoughCircles()
+    {
+        Mat grayMat = new Mat();
+        Mat cannyEdges = new Mat();
+        Mat circles = new Mat();
+
+        Imgproc.cvtColor(originalMat, grayMat, Imgproc.COLOR_BGR2GRAY);
+        Imgproc.Canny(grayMat, cannyEdges, 10, 100);
+        Imgproc.HoughCircles(cannyEdges, circles, Imgproc.CV_HOUGH_GRADIENT, 1, cannyEdges.rows()/15, grayMat.rows()/8);
+
+        Mat houghCircles = new Mat();
+        houghCircles.create(cannyEdges.rows(), cannyEdges.cols(), CvType.CV_8UC1);
+
+        for (int i = 0 ; i < circles.cols() ; i++){
+            double[] parameters = circles.get(0, i);
+            double x, y;
+            int r;
+            x = parameters[0];
+            y = parameters[1];
+            r = (int)parameters[2];
+            Point center = new Point(x,y);
+            Imgproc.circle(houghCircles, center, r, new Scalar(255, 0 ,0), 1);
+
+        }
+        Utils.matToBitmap(houghCircles, currentBitmap);
         imgView.setImageBitmap(currentBitmap);
     }
 
