@@ -63,8 +63,8 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Buffer"
-            android:id="@+id/BUffer1"
+            android:text="Contour"
+            android:id="@+id/contour"
             />
         <Button
             android:layout_width="wrap_content"

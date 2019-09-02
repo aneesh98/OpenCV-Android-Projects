@@ -24,12 +24,15 @@ import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -37,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     public Bitmap currentBitmap;
     public ImageView imgView;
     public Mat originalMat;
-    Button DoG, canny, sobel, corners, line, circle;
+    Button DoG, contour, canny, sobel, corners, line, circle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +95,15 @@ public class MainActivity extends AppCompatActivity {
                 HoughCircles();
             }
         });
+        contour = (Button) findViewById(R.id.contour);
+        contour.setVisibility(View.INVISIBLE);
+        contour.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Contours();
+            }
+        });
+
 
     }
     private BaseLoaderCallback mOpenCVCallBack = new BaseLoaderCallback(this) {
@@ -175,6 +187,7 @@ public class MainActivity extends AppCompatActivity {
             corners.setVisibility(View.VISIBLE);
             line.setVisibility(View.VISIBLE);
             circle.setVisibility(View.VISIBLE);
+            contour.setVisibility(View.VISIBLE);
         }
     }
 
@@ -297,6 +310,28 @@ public class MainActivity extends AppCompatActivity {
 
         }
         Utils.matToBitmap(houghCircles, currentBitmap);
+        imgView.setImageBitmap(currentBitmap);
+    }
+
+    public void Contours(){
+        Mat grayMat = new Mat();
+        Mat cannyEdges = new Mat();
+        Mat Hierarchy = new Mat();
+        List<MatOfPoint> contourList = new ArrayList<>();
+        Imgproc.cvtColor(originalMat, grayMat, Imgproc.COLOR_BGR2GRAY);
+        Imgproc.Canny(grayMat, cannyEdges, 10, 100);
+        Imgproc.findContours(cannyEdges, contourList, Hierarchy,
+                Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+
+        Mat contours = new Mat();
+        contours.create(cannyEdges.rows(), cannyEdges.cols(),
+                CvType.CV_8UC3);
+        Random r = new Random();
+        for (int i = 0 ; i<contourList.size(); i++){
+            Imgproc.drawContours(contours, contourList, i, new Scalar(r.nextInt(255), r.nextInt(255), r.nextInt(255)), -1);
+
+        }
+        Utils.matToBitmap(contours, currentBitmap);
         imgView.setImageBitmap(currentBitmap);
     }
 
