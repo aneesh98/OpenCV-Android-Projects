@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     public Bitmap currentBitmap;
     public ImageView imgView;
     public Mat originalMat;
-    Button DoG, contour, canny, sobel, corners, line, circle;
+    Button DoG, contour, canny, sobel, corners, line, circle, sudoku;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,6 +103,15 @@ public class MainActivity extends AppCompatActivity {
                 Contours();
             }
         });
+        sudoku = (Button) findViewById(R.id.Sudoku);
+        sudoku.setVisibility(View.INVISIBLE);
+        sudoku.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                findSudoku();
+            }
+        });
+
 
 
     }
@@ -188,6 +197,7 @@ public class MainActivity extends AppCompatActivity {
             line.setVisibility(View.VISIBLE);
             circle.setVisibility(View.VISIBLE);
             contour.setVisibility(View.VISIBLE);
+            sudoku.setVisibility(View.VISIBLE);
         }
     }
 
@@ -334,7 +344,33 @@ public class MainActivity extends AppCompatActivity {
         Utils.matToBitmap(contours, currentBitmap);
         imgView.setImageBitmap(currentBitmap);
     }
-
+    public void findSudoku(){
+        Mat grayMat = new Mat();
+        Mat cannyEdges = new Mat();
+        Mat contours = new Mat();
+        Mat Hierarchy = new Mat();
+        List<MatOfPoint> contourList = new ArrayList<>();
+        Imgproc.cvtColor(originalMat, grayMat, Imgproc.COLOR_BGR2GRAY);
+        Imgproc.Canny(grayMat, cannyEdges, 10, 100);
+        Imgproc.findContours(cannyEdges, contourList, Hierarchy,
+                Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+        contours.create(cannyEdges.rows(), cannyEdges.cols(),
+                CvType.CV_8UC3);
+        double maxArea  = 0;
+        int idx = 0 ;
+        for (int i = 0; i < contourList.size() ; i++){
+            double contourArea = Imgproc.contourArea(contourList.get(i));
+            if (maxArea < contourArea){
+                maxArea = contourArea;
+                idx = i;
+            }
+        }
+        Log.e("Contour Inder", "ind "+Integer.valueOf(idx).toString());
+        Random r = new Random();
+        Imgproc.drawContours(originalMat, contourList, idx, new Scalar(r.nextInt(255), r.nextInt(255), r.nextInt(255)), 1);
+        Utils.matToBitmap(originalMat, currentBitmap);
+        imgView.setImageBitmap(currentBitmap);
+    }
     public Bitmap rotateBitmap(Bitmap bitmap, int orientation) {
         Matrix matrix = new Matrix();
         switch (orientation) {
