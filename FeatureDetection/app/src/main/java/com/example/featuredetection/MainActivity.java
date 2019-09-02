@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
-
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -18,25 +17,27 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import org.opencv.core.Core;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.io.IOException;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
     Bitmap originalBitmap;
     public Bitmap currentBitmap;
     public ImageView imgView;
     public Mat originalMat;
-    Button DoG;
+    Button DoG, canny, sobel, corners;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,11 +45,35 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_PICK,
                 Uri.parse("content://media/internal/images/media"));
         DoG = (Button) findViewById(R.id.gBlur);
+        sobel = (Button) findViewById(R.id.sobel);
+        sobel.setVisibility(View.INVISIBLE);
+        sobel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Sobel();
+            }
+        });
         DoG.setVisibility(View.INVISIBLE);
+        canny = (Button) findViewById(R.id.canny);
+        canny.setVisibility(View.INVISIBLE);
         DoG.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 DifferenceOfGaussian();
+            }
+        });
+        canny.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Canny();
+            }
+        });
+        corners = (Button) findViewById(R.id.corner);
+        corners.setVisibility(View.INVISIBLE);
+        corners.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HarrisCorner();
             }
         });
     }
@@ -128,7 +153,9 @@ public class MainActivity extends AppCompatActivity {
             imgView = (ImageView) findViewById(R.id.image_view);
             imgView.setImageBitmap(currentBitmap);
             DoG.setVisibility(View.VISIBLE);
-
+            canny.setVisibility(View.VISIBLE);
+            sobel.setVisibility(View.VISIBLE);
+            corners.setVisibility(View.VISIBLE);
         }
     }
 
@@ -151,6 +178,55 @@ public class MainActivity extends AppCompatActivity {
         Utils.matToBitmap(DoG, currentBitmap);
         imgView.setImageBitmap(currentBitmap);
 
+    }
+
+    public void Canny()
+    {
+        Mat grayMat = new Mat();
+        Mat cannyEdges = new Mat();
+        Imgproc.cvtColor(originalMat, grayMat, Imgproc.COLOR_BGR2GRAY);
+        Imgproc.Canny(grayMat, cannyEdges, 10, 100);
+        Utils.matToBitmap(cannyEdges, currentBitmap);
+        imgView.setImageBitmap(currentBitmap);
+    }
+
+    public void Sobel(){
+        Mat grayMat = new Mat();
+        Mat sobel = new Mat();
+        //Mat to store gradient and absolute gradient respectively
+        Mat grad_x = new Mat();
+        Mat abs_grad_x = new Mat();
+        Mat grad_y = new Mat();
+        Mat abs_grad_y = new Mat();
+        Imgproc.cvtColor(originalMat, grayMat, Imgproc.COLOR_BGR2GRAY);
+        Imgproc.Sobel(grayMat, grad_x, CvType.CV_16S, 1, 0, 3, 1, 0);
+        Imgproc.Sobel(grayMat, grad_y, CvType.CV_16S, 0, 1, 3, 1, 0);
+        Core.convertScaleAbs(grad_x, abs_grad_x);
+        Core.convertScaleAbs(grad_y, abs_grad_y);
+        Core.addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 1, sobel);
+        Utils.matToBitmap(sobel, currentBitmap);
+        imgView.setImageBitmap(currentBitmap);
+    }
+
+    public void HarrisCorner(){
+        Mat grayMat = new Mat();
+        Mat corners = new Mat();
+        Imgproc.cvtColor(originalMat, grayMat, Imgproc.COLOR_BGR2GRAY);
+        Mat tempDst = new Mat();
+        Imgproc.cornerHarris(grayMat, tempDst, 2, 3, 0.04);
+        Mat tempDstNorm = new Mat();
+        Core.normalize(tempDst, tempDstNorm, 0, 255, Core.NORM_MINMAX);
+        Core.convertScaleAbs(tempDstNorm, corners);
+        Random r = new Random();
+        for (int i = 0 ; i<tempDstNorm.cols(); i++){
+            for (int j = 0; j < tempDstNorm.rows(); j++){
+                double[] value = tempDstNorm.get(j,i);
+                if (value[0] > 150)
+                    Imgproc.circle(corners, new Point(i, j) , 5, new Scalar(r.nextInt(255)), 2);
+            }
+        }
+        Utils.matToBitmap(corners, currentBitmap);
+        imgView.setImageBitmap(currentBitmap);
     }
 
     public Bitmap rotateBitmap(Bitmap bitmap, int orientation) {

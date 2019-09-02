@@ -10,7 +10,7 @@
 
     <ImageView
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="400dp"
         android:id="@+id/image_view"
         android:visibility="visible"/>
     <LinearLayout
@@ -24,6 +24,23 @@
             android:text="G Blur"
             android:id="@+id/gBlur"
             />
-
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Canny"
+            android:id="@+id/canny"
+            />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sobel"
+            android:id="@+id/sobel"
+            />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Find Corners"
+            android:id="@+id/corner"
+            />
     </LinearLayout>
 </LinearLayout>
